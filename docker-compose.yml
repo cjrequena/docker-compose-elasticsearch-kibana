@@ -1,30 +1,40 @@
-version: "2"
+version: '3.6'
 services:
-  # https://www.docker.elastic.co/
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
-    restart: always
-    network_mode: host
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
+    container_name: elasticsearch
     environment:
-      - discovery.type=single-node
-      - cluster.name=jgBay-cluster
+      - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
-      - "xpack.security.enabled=false"
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.4.3
-    restart: always
-    network_mode: host
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - discovery.zen.minimum_master_nodes=1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
     ports:
-      - "5601:5601"
+      - 9200:9200
+    networks:
+      - esnet
+
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana:6.4.3'
+    container_name: kibana
     environment:
-      ELASTICSEARCH_URL: http://localhost:9200
-# Must be mounted like this or else permission aren't correct
+      SERVER_NAME: kibana.local
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - '5601:5601'
+    networks:
+      - esnet
+
 volumes:
-  esdata:
+  esdata1:
     driver: local
+
+networks:
+  esnet:
