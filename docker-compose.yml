@@ -2,7 +2,7 @@ version: '2.2'
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
-    container_name: elasticsearch
+    container_name: elasticsearch_container_1
     environment:
       - cluster.name=${CLUSTER_NAME:-docker-cluster}
       - bootstrap.memory_lock=true
@@ -21,7 +21,7 @@ services:
       - esnet
   elasticsearch2:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
-    container_name: elasticsearch2
+    container_name: elasticsearch_container_2
     environment:
       - cluster.name=${CLUSTER_NAME:-docker-cluster}
       - bootstrap.memory_lock=true
@@ -40,7 +40,7 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.4.3
-    container_name: kibana
+    container_name: kibana_container
     environment:
       SERVER_NAME: kibana.local
       ELASTICSEARCH_URL: http://elasticsearch:9200
